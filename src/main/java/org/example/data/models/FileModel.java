@@ -1,54 +1,72 @@
 package org.example.data.models;
 
+import org.example.core.FileHelper;
+
+import java.io.File;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
 public class FileModel {
 
-    private int id;
-    private String fileName;
-    private String filePath;
-    private int numberOfRecords;
-
-    private String directoryPath;
+    private String id;
+    private String fileName = "";
+    private String fileData = "";
+    private String filePath = "";
+    private String directoryPath = "";
+    private int numberOfRecords = 0;
     private Timestamp insertTime;
     private Timestamp lastModified;
+    private String status = "READ";
 
     public FileModel() {
     }
 
-    public FileModel(String fileName, String filePath, int numberOfRecords, String directoryPath) {
-        this.fileName = fileName;
-        this.filePath = filePath;
-        this.numberOfRecords = numberOfRecords;
-        this.directoryPath = directoryPath;
-        Date date = new Date();
-        this.insertTime =new Timestamp(date.getTime());
-        this.lastModified = new Timestamp(date.getTime());
+    public FileModel(File file) {
+        this.fileName = file.getName();
+        this.filePath = file.getPath();
+        this.directoryPath = file.getParent();
+        this.lastModified = new Timestamp(file.lastModified());
+        this.insertTime = new Timestamp(new Date().getTime());
+        this.id = filePath + lastModified;
+        this.status = "READ";
+        FileHelper fileHelper = new FileHelper(file.getAbsolutePath());
+        List<String> data = fileHelper.getAllDataSeperatedWithSemicolon();
+        if (!data.isEmpty()) {
+            this.fileData = String.join(";",data);
+            this.numberOfRecords = data.size();
+        }
     }
 
-    public FileModel(String fileName, String filePath, int numberOfRecords, String directoryPath, Timestamp lastModified) {
+    public FileModel(String fileName, String fileData, String filePath, String directoryPath, int numberOfRecords, Timestamp lastModified) {
         this.fileName = fileName;
+        this.fileData = fileData;
         this.filePath = filePath;
-        this.numberOfRecords = numberOfRecords;
         this.directoryPath = directoryPath;
+        this.numberOfRecords = numberOfRecords;
         this.lastModified = lastModified;
+        this.id = filePath + lastModified;
+        this.insertTime = new Timestamp(new Date().getTime());
+        this.status = "READ";
     }
 
-    public FileModel(int id, String fileName, String filePath, String directoryPath, int numberOfRecords, Timestamp insertTime, Timestamp lastModified) {
+    public FileModel(String id, String fileName, String fileData, String filePath, String directoryPath, int numberOfRecords, Timestamp insertTime, Timestamp lastModified, String status) {
         this.id = id;
         this.fileName = fileName;
+        this.fileData = fileData;
         this.filePath = filePath;
+        this.directoryPath = directoryPath;
         this.numberOfRecords = numberOfRecords;
         this.insertTime = insertTime;
         this.lastModified = lastModified;
+        this.status = status;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -60,12 +78,28 @@ public class FileModel {
         this.fileName = fileName;
     }
 
+    public String getFileData() {
+        return fileData;
+    }
+
+    public void setFileData(String fileData) {
+        this.fileData = fileData;
+    }
+
     public String getFilePath() {
         return filePath;
     }
 
     public void setFilePath(String filePath) {
         this.filePath = filePath;
+    }
+
+    public String getDirectoryPath() {
+        return directoryPath;
+    }
+
+    public void setDirectoryPath(String directoryPath) {
+        this.directoryPath = directoryPath;
     }
 
     public int getNumberOfRecords() {
@@ -92,12 +126,12 @@ public class FileModel {
         this.lastModified = lastModified;
     }
 
-    public String getDirectoryPath() {
-        return directoryPath;
+    public String getStatus() {
+        return status;
     }
 
-    public void setDirectoryPath(String directoryPath) {
-        this.directoryPath = directoryPath;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     @Override
@@ -105,11 +139,13 @@ public class FileModel {
         return "FileModel{" +
                 "id='" + id + '\'' +
                 ", fileName='" + fileName + '\'' +
+                ", fileData='" + fileData + '\'' +
                 ", filePath='" + filePath + '\'' +
-                ", numberOfRecords=" + numberOfRecords +
                 ", directoryPath='" + directoryPath + '\'' +
+                ", numberOfRecords=" + numberOfRecords +
                 ", insertTime=" + insertTime +
                 ", lastModified=" + lastModified +
+                ", status='" + status + '\'' +
                 '}';
     }
 }

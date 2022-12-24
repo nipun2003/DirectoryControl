@@ -22,20 +22,19 @@ public class PostgresDatabase {
                     .getConnection("jdbc:postgresql://localhost:5432/" + databaseName,
                             userName, userPassword);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return null;
         }
     }
 
     private static PostgresDatabase INSTANCE = null;
 
-    private static PostgresDatabase getDatabase(
-            String userName, String userPassword, String databaseName
-    ) {
+    public static PostgresDatabase getDatabase() {
         if (INSTANCE != null) {
             return INSTANCE;
         }
         INSTANCE = new PostgresDatabase(
-                databaseName, userName, userPassword
+                "directory_demo", "lucifer", "2003"
         );
         return INSTANCE;
     }

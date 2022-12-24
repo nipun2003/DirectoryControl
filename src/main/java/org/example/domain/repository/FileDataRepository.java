@@ -1,4 +1,4 @@
-package org.example.domain;
+package org.example.domain.repository;
 
 import org.example.data.models.FileModel;
 
@@ -8,7 +8,7 @@ public interface FileDataRepository {
 
     void insertFile(FileModel fileModel);
 
-    void updateFile(String id);
+    void updateFile(FileModel id);
 
     ArrayList<FileModel> getAllFileOfADirectory(String directoryName);
 
