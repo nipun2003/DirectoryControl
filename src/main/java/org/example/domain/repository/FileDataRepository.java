@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public interface FileDataRepository {
 
-    void insertFile(FileModel fileModel);
+    boolean insertFile(FileModel fileModel);
 
     void updateFile(FileModel id);
 

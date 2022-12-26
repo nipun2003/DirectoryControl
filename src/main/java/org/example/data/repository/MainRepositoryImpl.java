@@ -22,17 +22,44 @@ public class MainRepositoryImpl implements MainRepository {
     }
 
     @Override
-    public boolean insertFileIntoDatabase(String dataPath) {
+    public boolean processDirectory(String dataPath,String destinationPath) {
         try {
-            getAllTextFileInsideADirectory(dataPath).forEach(file -> {
-                FileModel fileModel = new FileModel(file);
-                fileDataRepository.insertFile(fileModel);
-            });
+            ArrayList<File> files = getAllTextFileInsideADirectory(dataPath);
+            int batch = 20;
+            if (files.size() <= batch) {
+                files.forEach(file -> {
+                    FileModel fileModel = new FileModel(file, dataPath);
+                    boolean inserted = fileDataRepository.insertFile(fileModel);
+                    if (inserted) {
+                        fileModel.copyFile(destinationPath);
+                    }
+                });
+                return true;
+            }
+            insertFileInBatches(getAllTextFileInsideADirectory(dataPath), batch, dataPath, destinationPath);
             return true;
         } catch (IOException e) {
             System.out.println("Error reading directory path");
             return false;
         }
+    }
+
+    private void insertFileInBatches(ArrayList<File> files, int batch, String parent, String destination) {
+        for (int i = 0; i < files.size(); i += batch) {
+            int chunkSize = Math.min(files.size(), batch + i);
+            insertFilesUsingThread(files.subList(i, chunkSize), parent, destination);
+        }
+    }
+
+    private void insertFilesUsingThread(List<File> files, String parent, String destination) {
+        Thread thread = new Thread(() -> files.forEach(file -> {
+            FileModel fileModel = new FileModel(file, parent);
+            boolean inserted = fileDataRepository.insertFile(fileModel);
+            if (inserted) {
+                fileModel.copyFile(destination);
+            }
+        }));
+        thread.start();
     }
 
     @Override
@@ -44,6 +71,8 @@ public class MainRepositoryImpl implements MainRepository {
         ArrayList<File> arrayList = new ArrayList<>();
         try (Stream<Path> stream = Files.list(Paths.get(directoryPath))) {
             stream.forEach(path -> {
+                // /root/home/nipun/demo
+                // /root/home/nipun/demo/nipun.txt
                 if (Files.isDirectory(path)) {
                     // We recursively check if there present another text file inside subdirectory
                     try {

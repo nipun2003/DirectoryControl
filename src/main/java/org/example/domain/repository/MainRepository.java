@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface MainRepository {
 
-    boolean insertFileIntoDatabase(String dataPath);
+    boolean processDirectory(String dataPath,String destinationPath);
 
     List<FileModel> getAllFilesInsertedInDatabase();
 }

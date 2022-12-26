@@ -16,13 +16,15 @@ public class Main {
         MainRepository mainRepository = new MainRepositoryImpl(fileDataRepository);
         char terminate = takeCommand();
         while (true) {
-            boolean shouldOutOfTheLoop = false;
+            boolean userWantToQuit = false;
             switch (terminate) {
                 case 'e' -> {
                     Scanner scanner = new Scanner(System.in);
                     System.out.print("Enter directory path: ");
                     String directoryPath = scanner.next();
-                    boolean inserted = mainRepository.insertFileIntoDatabase(directoryPath);
+                    System.out.print("Enter destination directory: ");
+                    String destinationDirectory = scanner.next();
+                    boolean inserted = mainRepository.processDirectory(directoryPath, destinationDirectory);
                     String res = inserted ? "File inserted into database" : "error processing directory";
                     System.out.println(res);
                 }
@@ -30,17 +32,17 @@ public class Main {
                     mainRepository.getAllFilesInsertedInDatabase().forEach(System.out::println);
                 }
                 default -> {
-                    shouldOutOfTheLoop = true;
+                    userWantToQuit = true;
                 }
             }
-            if (shouldOutOfTheLoop) break;
+            if (userWantToQuit) break;
             terminate = takeCommand();
         }
     }
 
     private static char takeCommand() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("\n\nPress commands\nl -> For listing all files in database\ne -> For entering directory to database\nPress any other button to terminate");
+        System.out.println("Press commands\nl -> For listing all files in database\ne -> For entering directory to database\nPress any other button to terminate");
         return scanner.next().charAt(0);
     }
 }

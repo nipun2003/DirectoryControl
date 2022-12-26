@@ -50,13 +50,33 @@ public class FileDataRepositoryImpl implements FileDataRepository {
         }
     }
 
+    private boolean isFileAlreadyInserted(Connection connection, String id) {
+        try {
+            String query = "SELECT EXISTS(SELECT 1 FROM " + tableName + " WHERE " + id_field + "=?);";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            return resultSet.getBoolean(1);
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
 
     @Override
-    public void insertFile(FileModel fileModel) {
+    public boolean insertFile(FileModel fileModel) {
         Connection connection = database.connectToDatabase();
-        if (connection == null) return;
+        if (connection == null) return false;
+        boolean isInserted = false;
         try {
-            // Query order fileName,filePath,directoryPath,numberOfRecords,insertTime,lastModifiedTime
+            if (isFileAlreadyInserted(connection, fileModel.getId())) {
+                closeConnection(connection);
+                return false;
+            }
+            System.out.println("Inserting");
+            fileModel.readFile();
+            // Query order fileId, fileName,fileData,filePath,directoryPath,numberOfRecords,insertTime,lastModifiedTime,status
             String query = String.format("INSERT INTO %s VALUES(?,?,?,?,?,?,?,?,?) ON CONFLICT DO NOTHING;", tableName);
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1, fileModel.getId());
@@ -70,11 +90,13 @@ public class FileDataRepositoryImpl implements FileDataRepository {
             statement.setString(9, fileModel.getStatus());
             statement.executeUpdate();
             statement.close();
+            isInserted = true;
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
             closeConnection(connection);
         }
+        return isInserted;
     }
 
     @Override
@@ -88,9 +110,9 @@ public class FileDataRepositoryImpl implements FileDataRepository {
         if (connection == null) return new ArrayList<>();
         ArrayList<FileModel> results = new ArrayList<>();
         try {
-            String query = "SELECT * FROM "+tableName+" WHERE "+directoryPath_field+"=?";
+            String query = "SELECT * FROM " + tableName + " WHERE " + directoryPath_field + "=?";
             PreparedStatement statement = connection.prepareStatement(query);
-            statement.setString(1,directoryName);
+            statement.setString(1, directoryName);
             ResultSet rs = statement.executeQuery();
             results = extractFileModelFromQuery(rs);
         } catch (Exception e) {

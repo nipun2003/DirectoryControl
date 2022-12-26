@@ -3,6 +3,8 @@ package org.example.data.models;
 import org.example.core.FileHelper;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
@@ -22,20 +24,34 @@ public class FileModel {
     public FileModel() {
     }
 
-    public FileModel(File file) {
-        this.fileName = file.getName();
-        this.filePath = file.getPath();
-        this.directoryPath = file.getParent();
-        this.lastModified = new Timestamp(file.lastModified());
-        this.insertTime = new Timestamp(new Date().getTime());
-        this.id = filePath + lastModified;
-        this.status = "READ";
-        FileHelper fileHelper = new FileHelper(file.getAbsolutePath());
+    public void readFile(){
+        FileHelper fileHelper = new FileHelper(filePath);
         List<String> data = fileHelper.getAllDataSeperatedWithSemicolon();
         if (!data.isEmpty()) {
             this.fileData = String.join(";",data);
             this.numberOfRecords = data.size();
         }
+    }
+
+    public boolean copyFile(String destination){
+        boolean isCopied = false;
+        try {
+            FileHelper fileHelper = new FileHelper(filePath);
+            fileHelper.copyFile(destination,directoryPath);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+        return isCopied;
+    }
+
+    public FileModel(File file,String parent) {
+        this.fileName = file.getName();
+        this.filePath = file.getPath();
+        this.directoryPath = parent;
+        this.lastModified = new Timestamp(file.lastModified());
+        this.insertTime = new Timestamp(new Date().getTime());
+        this.id = filePath + lastModified;
+        this.status = "READ";
     }
 
     public FileModel(String fileName, String fileData, String filePath, String directoryPath, int numberOfRecords, Timestamp lastModified) {
