@@ -20,3 +20,7 @@ This is a sample case study of how we can read files in local machines and save 
 ### Pre-Requisite
 1. Java-Jdk installed in your system
 2. gradle 7.4 or above 
+3. Postgresql installed on your system.
+4. Go to src/main/java/org/example/data/database/PostgresDatabase 
+   1. Change database name to your database in line no 37
+   2. Change database user and password with your user and password on line 37
