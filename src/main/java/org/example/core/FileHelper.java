@@ -30,7 +30,7 @@ public class FileHelper {
 
     public void copyFile(String destination, String parent) throws IOException, FileAlreadyExistsException {
         File destinationDirectory = new File(destination);
-        if (!destinationDirectory.exists()) destinationDirectory.mkdir();
+        if (!destinationDirectory.exists()) destinationDirectory.mkdirs();
         String destinationFileName = filePath.substring(parent.length() + 1);
         String destinationFile = getFile(destination, destinationFileName);
         Path sourcePath = Paths.get(filePath);
@@ -44,7 +44,7 @@ public class FileHelper {
             String name = file.getName();
             String temp = name.substring(0, name.lastIndexOf('.'));
             temp += "_n.txt";
-            file = new File(directory, temp);
+            file = new File(file.getParent(), temp);
         }
         File newFileDirectory = new File(file.getParent());
         if (!newFileDirectory.exists()) newFileDirectory.mkdirs();
