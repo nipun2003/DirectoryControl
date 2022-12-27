@@ -1,19 +1,16 @@
 package org.example;
 
-import org.example.data.database.PostgresDatabase;
-import org.example.data.repository.FileDataRepositoryImpl;
 import org.example.data.repository.MainRepositoryImpl;
-import org.example.domain.repository.FileDataRepository;
 import org.example.domain.repository.MainRepository;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        FileDataRepository fileDataRepository = new FileDataRepositoryImpl(
-                PostgresDatabase.getDatabase()
-        );
-        MainRepository mainRepository = new MainRepositoryImpl(fileDataRepository);
+        ApplicationContext context = new ClassPathXmlApplicationContext("config.xml");
+        var mainRepository = context.getBean("mainRepository", MainRepositoryImpl.class);
         char terminate = takeCommand();
         while (true) {
             boolean userWantToQuit = false;

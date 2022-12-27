@@ -3,6 +3,8 @@ package org.example.data.repository;
 import org.example.data.models.FileModel;
 import org.example.domain.repository.FileDataRepository;
 import org.example.domain.repository.MainRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,10 +17,11 @@ import java.util.stream.Stream;
 
 public class MainRepositoryImpl implements MainRepository {
 
-    private final FileDataRepository fileDataRepository;
+    @Autowired
+    @Qualifier("fileDataRepository")
+    private FileDataRepository fileDataRepository;
 
-    public MainRepositoryImpl(FileDataRepository fileDataRepository) {
-        this.fileDataRepository = fileDataRepository;
+    public MainRepositoryImpl() {
     }
 
     @Override

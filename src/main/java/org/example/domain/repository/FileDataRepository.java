@@ -3,6 +3,7 @@ package org.example.domain.repository;
 import org.example.data.models.FileModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface FileDataRepository {
 
@@ -10,7 +11,7 @@ public interface FileDataRepository {
 
     void updateFile(FileModel id);
 
-    ArrayList<FileModel> getAllFileOfADirectory(String directoryName);
+    List<FileModel> getAllFileOfADirectory(String directoryName);
 
-    ArrayList<FileModel> getAllFiles();
+    List<FileModel> getAllFiles();
 }

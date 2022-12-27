@@ -47,7 +47,7 @@ public class FileHelper {
             file = new File(directory, temp);
         }
         File newFileDirectory = new File(file.getParent());
-        if (!newFileDirectory.exists()) newFileDirectory.mkdir();
+        if (!newFileDirectory.exists()) newFileDirectory.mkdirs();
         return file.getAbsolutePath();
     }
 }
