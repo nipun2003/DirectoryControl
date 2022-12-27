@@ -17,11 +17,11 @@ import java.util.stream.Stream;
 
 public class MainRepositoryImpl implements MainRepository {
 
-    @Autowired
-    @Qualifier("fileDataRepository")
-    private FileDataRepository fileDataRepository;
 
-    public MainRepositoryImpl() {
+    private final FileDataRepository fileDataRepository;
+
+    public MainRepositoryImpl(FileDataRepository fileDataRepository) {
+        this.fileDataRepository = fileDataRepository;
     }
 
     @Override

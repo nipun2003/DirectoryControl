@@ -1,16 +1,16 @@
 package org.example;
 
-import org.example.data.repository.MainRepositoryImpl;
+import org.example.di.AppModule;
 import org.example.domain.repository.MainRepository;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        ApplicationContext context = new ClassPathXmlApplicationContext("config.xml");
-        var mainRepository = context.getBean("mainRepository", MainRepositoryImpl.class);
+        ApplicationContext context = new AnnotationConfigApplicationContext(AppModule.class);
+        var mainRepository = context.getBean("getMainRepository", MainRepository.class);
         char terminate = takeCommand();
         while (true) {
             boolean userWantToQuit = false;

@@ -4,20 +4,18 @@ import org.example.data.mapper.FileMapper;
 import org.example.data.models.FileModel;
 import org.example.data.models.FileTableConstants;
 import org.example.domain.repository.FileDataRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
 
-public class FileDataRepositoryImpl implements FileDataRepository,FileTableConstants {
-
-    @Autowired
-    @Qualifier("jdbcTemplate")
-    private JdbcTemplate database;
+public class FileDataRepositoryImpl implements FileDataRepository, FileTableConstants {
 
 
-    public FileDataRepositoryImpl() {
+    private final JdbcTemplate database;
+
+
+    public FileDataRepositoryImpl(JdbcTemplate database) {
+        this.database = database;
         try {
 
             /* Table columns order ID,fileName,fileData,filePath,
@@ -38,7 +36,7 @@ public class FileDataRepositoryImpl implements FileDataRepository,FileTableConst
                     filePath_field, directoryPath_field, numberOfRecords_field,
                     insertTime_field, lastModified_field, status_field
             );
-            database.execute(query);
+            this.database.execute(query);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
